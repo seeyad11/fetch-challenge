@@ -1,0 +1,14 @@
+What are the top 5 brands by receipts scanned for most recent month?
+How does the ranking of the top 5 brands by receipts scanned for the recent month compare to the ranking for the previous month?
+
+
+with cte as(
+select DISTINCT _id, dateScanned, rank()over(order by dateScanned DESC) as rnk
+from receipts
+where dataScanned >= DATEADD(M, -2, GETDATE())
+group by month(dateScanned)
+)
+select c.__id, b.name, c.dateScanned
+from cte c left join brands b on c._id = b._id
+where c.rnk <= 5
+order by c.dateScanned DESC;
